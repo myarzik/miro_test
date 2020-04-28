@@ -1,0 +1,1 @@
+Just a simple Gherkin-scenarios for testing sticker main functionality.
