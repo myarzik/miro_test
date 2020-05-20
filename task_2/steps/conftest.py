@@ -9,31 +9,30 @@ from .pages import PAGE_OBJECTS
 MIRO_URL = 'https://miro.com'
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def browser():
-    browser = webdriver.Chrome()
-    browser.implicitly_wait(10)
-    yield browser
-    browser.quit()
+    web_browser = webdriver.Chrome()
+    web_browser.implicitly_wait(10)
+    yield web_browser
+    web_browser.quit()
 
 
 @pytest.fixture(autouse=True)
 def context():
     class Context(object):
         pass
-
     return Context()
 
 
 @given(parsers.parse('the "{endpoint}" endpoint is opened'))
-def get_url(endpoint):
+def get_url(endpoint, browser):
     context.url = f'{MIRO_URL}{endpoint}'
     browser.get(context.url)
 
 
 @then(parsers.parse('the "{page_name}" page is displayed'))
 @when(parsers.parse('the "{page_name}" page is displayed'))
-def the_page_is_displayed(page_name):
+def the_page_is_displayed(page_name, browser):
     if page_name in PAGE_OBJECTS.keys():
         context.page = PAGE_OBJECTS[page_name](browser)
         context.page_name = page_name
@@ -50,7 +49,7 @@ def the_item_is_displayed(item_name):
 
 
 @then(parsers.parse('the current url is "{url}"'))
-def check_url(url):
+def check_url(url, browser):
     assert browser.current_url == url, f"Wrong URL, expected {url}, instead of {browser.current_url}"
 
 
